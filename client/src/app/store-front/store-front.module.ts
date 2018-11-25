@@ -7,6 +7,7 @@ import { HomeComponent } from './store-front-components/home/home.component';
 import { StoreFrontComponent } from './store-front.component';
 import { NavbarComponent } from './store-front-components/navbar/navbar.component';
 import { MyAccountComponent } from './store-front-components/my-account/my-account.component';
+import { MyProfileComponent } from './store-front-components/my-profile/my-profile.component';
 
 @NgModule({
   imports: [
@@ -14,7 +15,7 @@ import { MyAccountComponent } from './store-front-components/my-account/my-accou
     SharedModule,
     RouterModule.forChild(storeFrontRoutes)
   ],
-  declarations: [StoreFrontComponent, HomeComponent, NavbarComponent, MyAccountComponent],
+  declarations: [StoreFrontComponent, HomeComponent, NavbarComponent, MyAccountComponent, MyProfileComponent],
   exports: [StoreFrontComponent]
 })
 export class StoreFrontModule {}

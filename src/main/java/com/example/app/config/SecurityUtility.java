@@ -16,16 +16,11 @@ public class SecurityUtility {
 
     @Bean
     public static BCryptPasswordEncoder passwordEncoder(){
-
-        System.out.println("INTO SECURITYUTILITY - PASSWORDENCODER");
-
         return new BCryptPasswordEncoder(12,new SecureRandom(SALT.getBytes()));
     }
 
     @Bean
     public static  String randomPassword(){
-
-        System.out.println("INTO SECURITYUTILITY - RANDOMPASSWORD");
 
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();

@@ -11,6 +11,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatListModule } from '@angular/material/list';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Services
 import { LoginService } from '../services/login.service';
@@ -34,7 +35,8 @@ import { UserService } from '../services/user.service';
     MatSlideToggleModule,
     MatListModule,
     MatDialogModule,
-    MatTabsModule
+    MatTabsModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     FormsModule,
@@ -46,7 +48,8 @@ import { UserService } from '../services/user.service';
     MatSlideToggleModule,
     MatListModule,
     MatDialogModule,
-    MatTabsModule
+    MatTabsModule,
+    MatProgressSpinnerModule
   ],
   declarations: [],
   providers: [

@@ -1,5 +1,6 @@
 package com.example.app.resources;
 
+import com.example.app.config.SecurityConfig;
 import com.example.app.config.SecurityUtility;
 import com.example.app.domain.User;
 import com.example.app.domain.security.Role;
@@ -11,16 +12,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/user")
 public class UserResource {
@@ -90,5 +91,73 @@ public class UserResource {
         mailSender.send(newEmail);
 
         return new ResponseEntity("Email for password reset sent", HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/getCurrentUser", method = RequestMethod.GET)
+    public User getCurrentUser(Principal principal) {
+        String username = principal.getName();
+        User user = new User();
+        if(null != username){
+           user  = userService.findByUsername(principal.getName());
+        }
+        return user;
+    }
+
+    @RequestMapping(value="/updateUserInfo", method = RequestMethod.POST)
+    public ResponseEntity profileInfo(@RequestBody HashMap<String, Object> mapper) throws Exception {
+
+        int id = (Integer) mapper.get("id");
+        String email = (String) mapper.get("email");
+        String username = (String) mapper.get("username");
+        String firstname = (String) mapper.get("firstname");
+        String lastname = (String) mapper.get("lastname");
+        String newPassword = (String) mapper.get("newPassword");
+        String currentPassword = (String) mapper.get("currentPassword");
+
+        User currentUser = userService.findById(Long.valueOf(id));
+
+        if(currentUser == null) {
+            throw new Exception("User not found");
+        }
+
+        if(userService.findByEmail(email) != null) {
+            if(userService.findByEmail(email).getId() != currentUser.getId()) {
+                return new ResponseEntity("Email not found", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        if(userService.findByUsername(username) != null) {
+            if(userService.findByUsername(username).getId() != currentUser.getId()){
+                return new ResponseEntity("Username not found", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        SecurityConfig securityConfig = new SecurityConfig();
+
+        System.out.println("new pass " + newPassword);
+
+        if(newPassword != null && !newPassword.isEmpty() && !newPassword.equals("")){
+            BCryptPasswordEncoder passwordEncoder = SecurityUtility.passwordEncoder();
+            String dbPassword = currentUser.getPassword();
+
+            if(passwordEncoder.matches(currentPassword, dbPassword)) {
+
+                currentUser.setPassword(passwordEncoder.encode(newPassword));
+
+                currentUser.setFirstname(firstname);
+                currentUser.setLastname(lastname);
+                currentUser.setUsername(username);
+                currentUser.setEmail(email);
+
+                userService.save(currentUser);
+                return new ResponseEntity("Update successfully", HttpStatus.OK);
+
+            } else {
+                return new ResponseEntity("Incorrect current password", HttpStatus.BAD_REQUEST);
+            }
+        }
+        else {
+            return new ResponseEntity("Incorrect new password", HttpStatus.BAD_REQUEST);
+        }
     }
 }
