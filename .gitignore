@@ -336,7 +336,7 @@ bookApp.iml
 client/src/environments/*
 client/node_modules/*
 src/main/resources/*
-*/.DS_Store
+**/.DS_Store
 
 /.idea
 /.mvn
